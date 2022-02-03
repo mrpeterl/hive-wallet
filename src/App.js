@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import { AwesomeButton } from "react-awesome-button";
+import "react-awesome-button/dist/styles.css";
 
 function App() {
   return (
@@ -9,14 +11,11 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <span>
+          <AwesomeButton type="primary">Primary</AwesomeButton>
+          <div class='divider'></div>
+          <AwesomeButton type="secondary">Primary</AwesomeButton>
+        </span>
       </header>
     </div>
   );
