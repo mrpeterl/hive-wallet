@@ -39,10 +39,10 @@ export default function Home() {
         </p>
         <span>
 
-            <AwesomeButton action={() => setModalShow(true)} variant="primary" type="primary">Primary</AwesomeButton>
+            <AwesomeButton action={() => setModalShow(true)} variant="primary" type="primary">Sign In</AwesomeButton>
             <LoginModal show={modalShow} onHide={() => setModalShow(false)} />
             <div className='divider'></div>
-            <AwesomeButton type="secondary">Primary</AwesomeButton>
+            <AwesomeButton type="secondary">Sign Up</AwesomeButton>
         </span>
         </header>
         
