@@ -1,23 +1,22 @@
-import logo from './logo.svg';
 import './App.css';
-import { AwesomeButton } from "react-awesome-button";
-import "react-awesome-button/dist/styles.css";
+import Home from './components/home/Home';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import hive from '@hiveio/hive-js';
 
-function App() {
+//hive.config.set('alternative_api_endpoints', ['https://api.hive.blog', 'https://anyx.io']);
+
+hive.api.getAccounts(['mahdiyari', 'hiveio'], function(err, result) {
+	console.log(err, result);
+});
+
+function App() { 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <AwesomeButton type="primary">Primary</AwesomeButton>
-          <div class='divider'></div>
-          <AwesomeButton type="secondary">Primary</AwesomeButton>
-        </span>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/2' element={<h2 > Hello</h2>} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
