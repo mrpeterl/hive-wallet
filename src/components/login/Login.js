@@ -68,14 +68,6 @@ async function login() {
   //loginModal.hide()
 }
 
-const logout = () => {
-  userData.authorized = false
-  userData.username = ''
-  userData.key = ''
-  window.localStorage.removeItem('userData')
-  //updateState()
-}
-
 export default function LoginModal(props) {
   return (
     <Modal
