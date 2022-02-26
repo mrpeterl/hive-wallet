@@ -1,0 +1,31 @@
+.selector {
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  border-radius: 15px;
+  inset-inline: 10%;
+}
+
+.crop {
+  outline: .08em solid black;
+  margin-top: 1%;
+  padding-top: 10%;
+  margin-left: 3%;
+  height: 95%;
+  overflow: hidden;
+}
+
+.crop img {
+  width: 400px;
+  height: 300px;
+  margin: -100px 0 0 0px;
+}
+
+.App-header {
+  display: block;
+  height: 230vh; 
+  padding-bottom: '10%'
+}
+
+.card-body {
+  text-align: left;
+}
