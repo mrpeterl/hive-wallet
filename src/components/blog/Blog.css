@@ -1,0 +1,26 @@
+img{
+    width:100%;
+    max-width:600px;
+    display: block;
+    margin: auto;
+}
+
+.blogTitle {
+    text-align: left;
+    padding-top: 2vh;
+    padding-left: 4%;
+}
+
+.blogAuthor {
+    text-align: left;
+    color: gray;
+    padding-left: 4%;
+}
+
+
+.blogPost {
+    text-align: left;
+    padding-bottom: 1vh;
+    padding-left: 3%;
+    padding-right: 3%;
+}
