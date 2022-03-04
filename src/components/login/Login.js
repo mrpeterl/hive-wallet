@@ -62,7 +62,7 @@ async function login() {
   userData.key = key
   console.log(userData)
   window.localStorage.setItem('userData', JSON.stringify(userData))
-  window.location.href = '/home';
+  window.location.href = '/home/trending';
   //loginButtonForm.removeAttribute('disabled')
   //updateState()
   //loginModal.hide()
