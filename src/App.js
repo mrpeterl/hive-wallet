@@ -9,6 +9,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/home' element={<Home />} >
+            <Route path=':searchType' element={<Home />} />
+        </Route>
         <Route path='/' element={<HomeNoAuth />} />
         <Route path='/home' element={<Home/>} />
       </Routes>
