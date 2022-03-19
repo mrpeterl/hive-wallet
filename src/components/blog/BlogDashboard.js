@@ -1,13 +1,13 @@
 import { React, useMemo, useState, useEffect } from 'react';
 import {useParams, useLocation} from 'react-router-dom';
-import hive from '@hiveio/hive-js';
 import { Link } from 'react-router-dom';
 import RemoveMarkdown from 'remove-markdown';
 import { Pagination, Container} from "react-bootstrap";
 import { VscCommentDiscussion } from 'react-icons/vsc';
-import { BiUpvote, BiDownvote } from 'react-icons/bi';
+import { BiUpvote } from 'react-icons/bi';
 import "react-awesome-button/dist/styles.css";
 import './BlogDashboard.css'
+import { fetchHiveData } from '../../utils/hiveTx';
 
 export function BlogDashboard({handleLoading}) {
     
@@ -21,7 +21,7 @@ export function BlogDashboard({handleLoading}) {
         return useMemo(() => new URLSearchParams(search), [search]);
     }
 
-    const [blogs, setBlogs]=useState([{'key': 1, 'children': 0, 'active_votes':[]}, {'key': 2, 'children': 0, 'active_votes':[]},{'key': 3, 'children': 0, 'active_votes':[]},{'key': 4, 'children': 0, 'active_votes':[]},{'key': 5, 'children': 0, 'active_votes':[]},{'key': 6, 'children': 0, 'active_votes':[]}]);
+    const [blogs, setBlogs]=useState([{'key': 1, 'json_metadata': {}, 'children': 0, 'active_votes':[]}, {'key': 2, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 3, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 4, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 5, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 6, 'json_metadata': {}, 'children': 0, 'active_votes':[]}]);
     const { searchType } = useParams();
     let query = useQuery();
 
@@ -57,25 +57,23 @@ export function BlogDashboard({handleLoading}) {
         toggleLoadingSpinner(true);
         setActive(page);
         if(searchType == 'trending') {
-            await hive.api.getDiscussionsByTrending({limit: 8*page}, function(err, result) {
-                console.log(err, result);
-                setBlogs(result.slice(page == 1 ? 0 : (page - 1)*8), (page * 8) -1);
-                toggleLoadingSpinner(false);
-            });
+            const operations = {limit: 8*page};
+            const blogs = await fetchHiveData('condenser_api.get_discussions_by_trending', operations);
+            setBlogs(blogs.result.slice(page == 1 ? 0 : (page -1)*8), (page * 8) -1);
+            toggleLoadingSpinner(false);
         }
         if(searchType == 'hot') {
-            await hive.api.getDiscussionsByHot({limit: 8*page}, function(err, result) {
-                console.log(err, result);
-                setBlogs(result.slice(page == 1 ? 0 : (page - 1)*8), (page * 8) -1);
-                toggleLoadingSpinner(false);
-            });
+            const operations = {limit: 8*page};
+            const blogs = await fetchHiveData('condenser_api.get_discussions_by_hot', operations);
+            setBlogs(blogs.result.slice(page == 1 ? 0 : (page -1)*8), (page * 8) -1);
+            toggleLoadingSpinner(false);
         }
         if(searchType == 'search') {
-            await hive.api.getDiscussionsByCreated({tag: query.get('query'),limit: 8*page}, function(err, result) {
-                console.log(err, result);
-                setBlogs(result.slice(page == 1 ? 0 : (page - 1)*8), (page * 8) -1);
-                toggleLoadingSpinner(false);
-            });
+            const operations = {limit: 8*page, tag: query.get('query')};
+            const blogs = await fetchHiveData('condenser_api.get_discussions_by_created', operations);
+            console.log(blogs)
+            setBlogs(blogs.result.slice(page == 1 ? 0 : (page -1)*8), (page * 8) -1);
+            toggleLoadingSpinner(false);
         }
     }
     useEffect(() => {
@@ -84,20 +82,31 @@ export function BlogDashboard({handleLoading}) {
 
 
     return(
-        <span style={{backgroundColor: 'hsla(56, 64%, 67%, 0.863)', display: 'block'}}>
+        <span style={{backgroundColor: 'hsla(56, 64%, 67%, 0.863)', display: 'block', minHeight: '100vh'}}>
         <br />
         <Container className='selector bg-dark' style={{ height:'95%', width: '100%'}}>
             <br></br>
-            <h1 style={{marginLeft: '2%',textAlign: 'left', color: 'white'}}>{searchType.charAt(0).toUpperCase() + searchType.substring(1)} Blogs</h1>
+            <h1 style={{marginLeft: '2%',textAlign: 'left', color: 'white'}}>{searchType != 'search' ? searchType.charAt(0).toUpperCase() + searchType.substring(1) + ' Blogs' : 'Search Results for: ' +  query.get('query')}</h1>
         {
         blogs && blogs.map((blog, index) => {
-        return(
+
+            const blogThumbail = () => {
+                try {
+                    if(JSON.parse(blog.json_metadata).hasOwnProperty('image')) {
+                        return JSON.parse(blog.json_metadata).image[0];
+                    }
+                }catch(err){
+                    console.log(err);
+                }
+            }
+
+        return( 
             <div key={blog.permlink} style={{paddingBottom: '0.5%', paddingTop: index == 0 ? '2%' : '0.5%'}}>
             <div className="card mb-3" style={{marginLeft: 'auto', marginRight: 'auto', width: '98%'}}>
                 <div className="row no-gutters">
                 <div className="col-md-4">
                     <div className="crop">
-                     <img src={blog.json_metadata ? JSON.parse(blog.json_metadata).image[0] ? JSON.parse(blog.json_metadata).image[0] : JSON.parse(blog.json_metadata).pictures[0].url : ''} alt="Blog Thumbnail" />
+                     <img src={blogThumbail()} alt="Blog Thumbnail" />
                     </div>
                 
                 </div>
@@ -133,7 +142,7 @@ export function BlogDashboard({handleLoading}) {
         )})}
         {BlogPagination()}
         </Container>
-        <br />  <br />  <br />  <br />
+        <br></br>
     </span>
     );
 

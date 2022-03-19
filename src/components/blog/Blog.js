@@ -1,11 +1,12 @@
 import { React, useState, useEffect } from 'react';
 import './Blog.css';
 import {useParams} from 'react-router-dom';
-import hive from '@hiveio/hive-js';
 import { Container } from "react-bootstrap";
 import LoadingOverlay from 'react-loading-overlay';
 import { marked } from 'marked';
 import { Navigation } from '../navigation/Navigation';
+import { Comments } from './comments/Comments';
+import { fetchHiveData } from '../../utils/hiveTx';
 
 export function Blog() {
     marked.setOptions({
@@ -20,19 +21,20 @@ export function Blog() {
     const [loading, setLoading] = useState(false);
 
     const getBlog = async (author, permlink) => {
-        await hive.api.getContent(author, permlink, function(err, result)  {
-            console.log(err, result);
-            setBlogState(state => ({...state, blog: result, blogDate: new Date(Date.parse(result.created)), blogBody: marked.parse(result.body)}));
-            toggleLoadingSpinner(false);
-        });
+
+      const operations =  [ author, permlink ];
+      const blog = await fetchHiveData('condenser_api.get_content', operations);
+
+      setBlogState(state => ({...state, blog: blog.result, blogDate: new Date(Date.parse(blog.result.created)), blogBody: marked.parse(blog.result.body)}));
+      toggleLoadingSpinner(false);
     }
+
     useEffect(() => {
         toggleLoadingSpinner(true);
         getBlog(author, id);
     }, [])
       
     return ( 
-      <div className="App">
         <span style={{backgroundColor: 'hsla(56, 64%, 67%, 0.863)', display: 'block', minHeight: '100vh'}}>
           <LoadingOverlay
             active={loading}
@@ -53,9 +55,9 @@ export function Blog() {
               />
               <article className='blogPost' dangerouslySetInnerHTML={{__html: blogState.blogBody}}></article>
             </Container>
-          </LoadingOverlay>
           <br />
+          <Comments author={author} permlink={id}></Comments>
+          </LoadingOverlay>
         </span>
-      </div>
   )
 }
