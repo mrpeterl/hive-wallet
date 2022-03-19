@@ -1,9 +1,9 @@
-import React from 'react';
-import { Form, Modal, Button } from "react-bootstrap";
+import React, { useState } from 'react';
+import { Form, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { AwesomeButton } from 'react-awesome-button';
 import "./Login.css"
-import hiveTx from "hive-tx";
+import { fetchHiveData, getPublicKey } from '../../utils/hiveTx';
 
 const userData = {
   authorized: false,
@@ -12,63 +12,58 @@ const userData = {
 }
 
 
-const validatePostingKey = async (username, privateKey) => {
-  const accounts = await hiveTx.call('condenser_api.get_accounts', [[username]])
-  if (
-    !accounts ||
-    !accounts.result ||
-    !Array.isArray(accounts.result) ||
-    accounts.result.length < 1
-  ) {
-    return { result: 0, error: 'Network error or wrong username' }
-  }
-  try {
-    const account = accounts.result[0]
-    const publicWif = account.posting.key_auths[0][0] || ''
-    const generatedPublicKey = hiveTx.PrivateKey.from(privateKey)
-      .createPublic()
-      .toString()
-
-    if (generatedPublicKey !== publicWif) {
-      return { result: 0, error: 'Wrong key' }
-    }
-    return { result: 1 }
-  } catch (e) {
-    return { result: 0, error: 'Wrong key or network error' }
-  }
-}
-
-async function login() {
-  console.log('logging in')
-  //const loginModal = bootstrap.Modal.getInstance(
-  //  document.getElementById('login-modal')
-  //)
-  //const loginButtonForm = document.getElementById('login-form-btn')
-  //loginButtonForm.setAttribute('disabled', 'true')
-  //const loginError = document.getElementById('login-error')
-  //loginError.style.display = 'none'
-  const username = document.getElementById('username').value;
-  const key = document.getElementById('key').value;
-  const validate = await validatePostingKey(username, key)
-  console.log(validate)
-  if (validate.result === 0) {
-    //loginError.innerHTML = validate.error
-    //loginError.style.display = 'block'
-    //loginButtonForm.removeAttribute('disabled')
-    return
-  }
-  userData.authorized = true
-  userData.username = username
-  userData.key = key
-  console.log(userData)
-  window.localStorage.setItem('userData', JSON.stringify(userData))
-  window.location.href = '/home/trending';
-  //loginButtonForm.removeAttribute('disabled')
-  //updateState()
-  //loginModal.hide()
-}
-
 export default function LoginModal(props) {
+  
+  const [keyError, setKeyError] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [disableButton, setDisableButton] = useState(false);
+  const validatePostingKey = async (username, privateKey) => {
+    const operations = [[username]]
+    const accounts = await fetchHiveData('condenser_api.get_accounts', operations);
+    if (
+      !accounts ||
+      !accounts.result ||
+      !Array.isArray(accounts.result) ||
+      accounts.result.length < 1
+    ) {
+      return { result: 0, error: 'Network error or wrong username' }
+    }
+    try {
+      const account = accounts.result[0]
+      const publicWif = account.posting.key_auths[0][0] || ''
+      const generatedPublicKey = await getPublicKey(privateKey);
+      console.log(account)
+      if (generatedPublicKey !== publicWif) {
+        
+        return { result: 0, error: 'Wrong key' }
+      }
+      return { result: 1 }
+    } catch (e) {
+      return { result: 0, error: 'Wrong key or network error' }
+    }
+  }
+  async function Login() {
+    setDisableButton(true);
+    const username = document.getElementById('username').value;
+    if(username == '') {
+      setUsernameError(true);
+      setDisableButton(false);
+      return;
+    }
+    const keyField = document.getElementById('key');
+    const validate = await validatePostingKey(username, keyField.value);
+    if (validate.result === 0) {
+      console.log(validate)
+      setKeyError(true);
+      return;
+    }
+    userData.authorized = true;
+    userData.username = username;
+    userData.key = keyField.value;
+    window.localStorage.setItem('userData', JSON.stringify(userData));
+    window.location.href = '/home/trending';
+  }
+
   return (
     <Modal
       {...props}
@@ -78,7 +73,7 @@ export default function LoginModal(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Modal heading
+          Login to HIVE Wallet
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -89,25 +84,22 @@ export default function LoginModal(props) {
           consectetur ac, vestibulum at eros.
         </p>
         <Form>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Label>Email address</Form.Label>
-            <Form.Control id="username" type="email" placeholder="Enter email" />
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-            </Form.Text>
+          <Form.Group className="mb-3">
+            <Form.Label>Username</Form.Label>
+            <Form.Control onChange={() => {setUsernameError(false);}} isInvalid={usernameError}  required id="username" type="username" placeholder="Username" />
+            <Form.Control.Feedback type="invalid" >The field Username is required and must have a value.</Form.Control.Feedback>
+         
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control id="key" type="password" placeholder="Password" />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check type="checkbox" label="Check me out" />
+          <Form.Group className="mb-3" >
+            <Form.Label>Private Key</Form.Label>
+            <Form.Control onChange={() => {setKeyError(false); setDisableButton(false);}} isInvalid={keyError} id="key" type="password" placeholder="Private Key" />
+            <Form.Control.Feedback type="invalid" >The private key does not match the username provided. Please double check and try again.</Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <AwesomeButton className="center mr-auto" size="large" type="primary" action={login}>Login</AwesomeButton>
+        <AwesomeButton disabled={disableButton} id="login-form-btn" className="center mr-auto" size="large" type="primary" action={Login}>Login</AwesomeButton>
         <AwesomeButton className="center mr-auto" size="large" type="secondary" action={props.onHide}>Close</AwesomeButton>
       </Modal.Footer>
     </Modal>

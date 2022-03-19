@@ -1,18 +1,23 @@
 import { Form, FormControl, Button, Nav, Navbar, NavDropdown, Container } from "react-bootstrap";
 import logo from '../home/logo.svg';
-
-async function handleSearch() {
-  const query = document.getElementById('searchQuery').value;
-  window.location.href = '/home/search?query=' + query; 
-}
+import React, { useState } from 'react';
 
 export function Navigation() {
 
+    const [searchError, setSearchError] = useState(false);
     function logout () {
         window.localStorage.removeItem('userData');
     }
 
-
+    async function handleSearch() {
+      const query = document.getElementById('searchQuery').value;
+      if(query == '') {
+        setSearchError(true);
+        return;
+      }
+      window.location.href = '/home/search?query=' + query; 
+    }
+    
     return(
     <Navbar bg="warning" variant="light">
     <Container>
@@ -34,6 +39,8 @@ export function Navigation() {
             <NavDropdown.Item href="/home/trending">Trending</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item href="/home/hot">Hot</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item href="/blog/create">Create Blog</NavDropdown.Item>
           </NavDropdown>
         <NavDropdown disabled='true' title="Blogs" id="basic-nav-dropdown">
             <NavDropdown.Item href="/home/trending">Trending</NavDropdown.Item>
@@ -47,13 +54,16 @@ export function Navigation() {
           </NavDropdown>
       <Form className="d-flex">
         <FormControl
+          onChange={() => {setSearchError(false); }}
+          isInvalid={searchError}
           type="search"
           id="searchQuery"
           placeholder="Search"
           className="me-2"
           aria-label="Search"
-        />
-        <Button onClick={handleSearch} variant="outline-success">Search</Button>
+        />            
+        <Form.Control.Feedback type="invalid" >Please enter a search term.</Form.Control.Feedback>
+        <Button  onClick={handleSearch} variant="outline-success">Search</Button>
       </Form>
         </Nav>
       <Navbar.Collapse className="justify-content-end">

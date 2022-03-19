@@ -12,7 +12,7 @@ import { Navigation } from '../navigation/Navigation';
 const {success, msg, cancel, notInstalled, notActive} = await keychain(window, 'requestTransfer', 'mrpeterl', 'therealwolf', 5,  'test memo', 'HIVE');
 //const message = await keychainRequestSign(window, 'test', 'test', '', 'mrpeterl', 'https://api.hive.blog');
 
-console.log(success + ' - ' + msg + ' - ' + cancel + ' - ' + notInstalled + ' - ' + notActive);
+//console.log(success + ' - ' + msg + ' - ' + cancel + ' - ' + notInstalled + ' - ' + notActive);
 console.log(isKeychainInstalled(window));
 console.log(hasKeychainBeenUsed());
 //console.log(message);
@@ -23,9 +23,9 @@ if(success) {
  // User didn't cancel, so something must have happened
  else if(!cancel) {
    if(notActive) {
-      alert('Please allow Keychain to access this website')
+      //alert('Please allow Keychain to access this website')
    } else if(notInstalled) {
-      alert('Please install Keychain')
+     // alert('Please install Keychain')
    } else {
      // error happened - check msg
    }
