@@ -7,8 +7,10 @@ import LoadingOverlay from 'react-loading-overlay';
 import { Navigation } from '../../navigation/Navigation';
 import { fetchHiveData, processHiveTransaction } from '../../../utils/hiveTx';
 import BlogCards from '../BlogCards';
-import { reduceRight } from '@hiveio/hive-js/lib/broadcast/operations';
 import { AwesomeButton } from 'react-awesome-button';
+import { BsPersonCircle, BsGlobe } from 'react-icons/bs';
+import { ImLocation } from 'react-icons/im';
+
 
 export function Profile() {
 
@@ -17,6 +19,9 @@ export function Profile() {
     const [user, setUser] = useState({name: '', posting_json_metadata: ''});
     const [userFollowCounts, setUserFollowCounts] = useState({});
     const [userImage, setUserImage] = useState('https://www.clipartkey.com/mpngs/m/100-1006688_headshot-silhouette-placeholder-image-person-free.png');
+    const [userDisplayName, setUserDisplayName] = useState('');  
+    const [userLocation, setUserLocation] = useState('');
+    const [userWebsite, setUserWebsite] = useState('');
     const [userBlogs, setUserBlogs]= useState([{'key': 1, 'json_metadata': {}, 'children': 0, 'active_votes':[]}, {'key': 2, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 3, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 4, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 5, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 6, 'json_metadata': {}, 'children': 0, 'active_votes':[]}]);
     const [isActiveUser, setIsActiveUser]= useState(false);
     const [isFollowing, setIsFollowing] = useState(false);
@@ -30,17 +35,20 @@ export function Profile() {
         const user = await fetchHiveData('condenser_api.get_accounts', operations);
         const followCounts = await fetchHiveData('condenser_api.get_follow_count', operations[0]);
         console.log(user.result[0]);     
-        console.log(followCounts.result);
         setUser(user.result[0]);
         setUserFollowCounts(followCounts.result);
-        setUserImage(JSON.parse(user.result[0].posting_json_metadata).profile.profile_image);
+        if(user.result[0].posting_json_metadata != '') {
+            setUserImage(JSON.parse(user.result[0].posting_json_metadata).profile.profile_image);
+            setUserDisplayName(JSON.parse(user.result[0].posting_json_metadata).profile.name);
+            setUserLocation(JSON.parse(user.result[0].posting_json_metadata).profile.location);
+            setUserWebsite(JSON.parse(user.result[0].posting_json_metadata).profile.website);
+        }
         setIsActiveUser(user.result[0].name == JSON.parse(localStorage.getItem('userData')).username);
     }
 
     async function getUserBlogs() {
         const operations = {sort: 'blog', account: username};
         const userBlogs = await fetchHiveData('bridge.get_account_posts', operations);
-        console.log(userBlogs)
         setUserBlogs(userBlogs.result);
         toggleLoadingSpinner(false)
     }
@@ -54,7 +62,7 @@ export function Profile() {
         setUsers(users.result);
 
         users.result.map((x, index) => {
-            if(x.follower == JSON.parse(localStorage.getItem('userData')).username) { console.log('hit');setIsFollowing(true) } 
+            if(x.follower == JSON.parse(localStorage.getItem('userData')).username) { setIsFollowing(true) } 
         })
     }
 
@@ -75,9 +83,7 @@ export function Profile() {
             ]
         ]
 
-        console.log(operations);
         const followResponse = await processHiveTransaction(operations);
-        console.log(followResponse)
         setIsFollowing(type == 'follow' ? true : false);
     }
 
@@ -103,7 +109,7 @@ export function Profile() {
               <Modal.Body>
                 {   
                     users && users.map((user, index) => {
-                        return(<h4>{props.type == 'Following' ? user.following : user.follower}</h4>);
+                        return(<h4>{followModalSelection == 'Following' ? user.following : user.follower}</h4>);
                     })
                 }
               </Modal.Body>
@@ -130,12 +136,29 @@ export function Profile() {
           <Container className='selector profileHeader' style={{height:'95%', width: '100%'}}>     
             <Row>          
                 <Col>
-                    <h1 style={{textAlign:'center', marginTop: '20%'}}></h1>
+                    <div style={{ paddingTop: '25%', display: 'inline'}}>
+                        <br></br>
+                        <br></br>
+                        <BsPersonCircle size='1.75em' style={{ marginLeft: '25%'}}></BsPersonCircle> 
+                        <h6  style={{float: 'right', marginRight: '20%'}}>{userDisplayName}</h6>
+                    </div>
+                    <div style={{ paddingTop: '25%', display: 'inline'}}>
+                        <br></br>
+                        <br></br>
+                        <ImLocation size='1.75em' style={{ marginLeft: '25%'}}></ImLocation> 
+                        <h6  style={{height: '2.5em', float: 'right', marginRight: '20%', overflow: 'hidden', maxWidth: '10em', textOverflow: 'ellipsis'}}>{userLocation}</h6>
+                    </div>
+                    <div style={{ paddingTop: '25%', display: 'inline'}}>
+                        <br></br>
+                        <br></br>
+                        <BsGlobe size='1.75em' style={{ marginLeft: '25%'}}></BsGlobe> 
+                        <h6  style={{height: '100%', float: 'right', marginRight: '20%', overflow: 'hidden', maxWidth: '10em', textOverflow: 'ellipsis'}}><a href={userWebsite}>{userWebsite}</a></h6>
+                    </div>
                 </Col>
                 <Col>          
                     <div style={{textAlign: 'center'}}>
                         <div style={{display: 'inline-block'}}>
-                            <h1 className='userTitle' >{user.name}</h1>        
+                            <h1 className='userTitle' >@{user.name}</h1>        
                             <Image src={userImage} roundedCircle='true' style={{ border: '5px solid black', marginTop:'2%', marginLeft: '5%', display:'inline', height:'10em', width: '10em'}}></Image>
                                 
                             <div  style={{clear: 'both', width: '110%'}}>
@@ -148,6 +171,9 @@ export function Profile() {
                     <br />
                 </Col>
                 <Col style={{textAlign:'center', marginTop: '8%', display: 'block'}}>
+                    { 
+                      isActiveUser && <AwesomeButton style={{marginBottom: '5%', marginRight: '10%'}} onPress={() => {}} size='large' type='secondary'>Edit Details</AwesomeButton> 
+                    }
                     { 
                       !isFollowing && !isActiveUser && <AwesomeButton style={{marginBottom: '5%', marginRight: '10%'}} onPress={() => {followUnfollowUser('follow')}} disabled={isFollowing} size='large' type='primary'>Follow</AwesomeButton>
                     }
