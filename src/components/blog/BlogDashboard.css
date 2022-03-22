@@ -20,6 +20,7 @@ text-align: left;
 
 .comments {
     display: block;
+    text-align: center;
     margin-top: auto;
     margin-bottom: auto;
 }

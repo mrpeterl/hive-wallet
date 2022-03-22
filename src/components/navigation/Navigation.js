@@ -67,10 +67,10 @@ export function Navigation() {
       </Form>
         </Nav>
       <Navbar.Collapse className="justify-content-end">
-      <NavDropdown title={JSON.parse(localStorage.getItem('userData')).username} id="basic-nav-dropdown">
+      <NavDropdown style={{paddingRight: '20%'}} title={JSON.parse(localStorage.getItem('userData')).username} id="basic-nav-dropdown">
             <NavDropdown.Item onClick={logout} href="/">Logout</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+            <NavDropdown.Item href={'/profile/' + JSON.parse(localStorage.getItem('userData')).username}>Profile</NavDropdown.Item>
           </NavDropdown>
       </Navbar.Collapse>
       </Container>

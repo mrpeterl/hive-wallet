@@ -4,6 +4,7 @@ import { Home, HomeNoAuth} from './components/home/Home';
 import { Blog } from './components/blog/Blog';
 import hive from '@hiveio/hive-js';
 import { CreateBlog } from './components/blog/CreateBlog';
+import { Profile } from './components/blog/profile/Profile';
 
 function App() { 
   return (
@@ -17,6 +18,9 @@ function App() {
           <Route path=":author/:id" element={<Blog />} />
         </Route>
         <Route path="/blog/create" element={<CreateBlog />} />
+        <Route path="/profile">
+          <Route  path=":username" element={<Profile />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
