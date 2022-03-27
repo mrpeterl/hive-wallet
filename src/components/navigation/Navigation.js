@@ -41,12 +41,8 @@ export function Navigation() {
             <NavDropdown.Item href="/home/hot">Hot</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item href="/blog/create">Create Blog</NavDropdown.Item>
-          </NavDropdown>
-        <NavDropdown disabled='true' title="Blogs" id="basic-nav-dropdown">
-            <NavDropdown.Item href="/home/trending">Trending</NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item href="/home/hot">Hot</NavDropdown.Item>
-          </NavDropdown>
+        </NavDropdown>
+        <Nav.Link href="/trading">Trading</Nav.Link>
         <NavDropdown disabled='true' title="Trading" id="basic-nav-dropdown">
             <NavDropdown.Item href="/home/trending">Trending</NavDropdown.Item>
             <NavDropdown.Divider />
