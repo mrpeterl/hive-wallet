@@ -2,7 +2,7 @@ import { React, useState, useEffect } from 'react';
 import {useParams} from 'react-router-dom';
 import './Profile.css';
 import '../BlogDashboard.css'
-import { Col, Container, Image, Modal, Row } from "react-bootstrap";
+import { Form, Col, Container, Image, Modal, Row } from "react-bootstrap";
 import LoadingOverlay from 'react-loading-overlay';
 import { Navigation } from '../../navigation/Navigation';
 import { fetchHiveData, processHiveTransaction } from '../../../utils/hiveTx';
@@ -25,8 +25,9 @@ export function Profile() {
     const [userBlogs, setUserBlogs]= useState([{'key': 1, 'json_metadata': {}, 'children': 0, 'active_votes':[]}, {'key': 2, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 3, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 4, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 5, 'json_metadata': {}, 'children': 0, 'active_votes':[]},{'key': 6, 'json_metadata': {}, 'children': 0, 'active_votes':[]}]);
     const [isActiveUser, setIsActiveUser]= useState(false);
     const [isFollowing, setIsFollowing] = useState(false);
-    const [modalShow, setModalShow] = useState(false);
+    const [followerModalShow, setFollowerModalShow] = useState(false);
     const [followModalSelection, setFollowModalSelection] = useState('Followers');
+    const [userProfileModalShow, setUserProfileModalShow] = useState(false);
     const [users, setUsers] = useState([{follower: '', following: ''}]);
 
 
@@ -89,6 +90,43 @@ export function Profile() {
 
     function toggleLoadingSpinner(bool) {
         setLoading(bool);
+    }
+
+    function UserProfileModal(props) {
+        console.log(props)
+
+        return (
+            <Modal
+              {...props}
+              size="lg"
+              aria-labelledby="contained-modal-title-vcenter"
+              centered
+            >
+              <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                  Edit Profile Details
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                    <Row>
+                        <Col>
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control type="email" placeholder="name@example.com" />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control type="email" placeholder="name@example.com" />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                </Form>
+              </Modal.Body>
+              </Modal>
+          );
     }
 
     function FollowerModal(props) {
@@ -162,9 +200,9 @@ export function Profile() {
                             <Image src={userImage} roundedCircle='true' style={{ border: '5px solid black', marginTop:'2%', marginLeft: '5%', display:'inline', height:'10em', width: '10em'}}></Image>
                                 
                             <div  style={{clear: 'both', width: '110%'}}>
-                                <h3 style={{float: 'left', cursor: 'pointer'}} onClick={() => {getUsers('Followers'); setModalShow(true)}} className='followCounter'><u>{userFollowCounts.follower_count} Followers</u> </h3>
+                                <h3 style={{float: 'left', cursor: 'pointer'}} onClick={() => {getUsers('Followers'); setFollowerModalShow(true)}} className='followCounter'><u>{userFollowCounts.follower_count} Followers</u> </h3>
                                 <h3 style={{marginLeft: '4.5%', marginRight: '3%', float: 'left'}} className='followCounter'>  |  </h3>
-                                <h3 style={{float: 'right', cursor: 'pointer'}} onClick={() => {getUsers('Following'); setModalShow(true)}} className='followCounter'> <u>{userFollowCounts.following_count} Following</u></h3>
+                                <h3 style={{float: 'right', cursor: 'pointer'}} onClick={() => {getUsers('Following'); setFollowerModalShow(true)}} className='followCounter'> <u>{userFollowCounts.following_count} Following</u></h3>
                             </div>
                             </div>
                     </div>
@@ -172,7 +210,7 @@ export function Profile() {
                 </Col>
                 <Col style={{textAlign:'center', marginTop: '8%', display: 'block'}}>
                     { 
-                      isActiveUser && <AwesomeButton style={{marginBottom: '5%', marginRight: '10%'}} onPress={() => {}} size='large' type='secondary'>Edit Details</AwesomeButton> 
+                      isActiveUser && <AwesomeButton style={{marginBottom: '5%', marginRight: '10%'}} onPress={() => {setUserProfileModalShow(true)}} size='large' type='secondary'>Edit Details</AwesomeButton> 
                     }
                     { 
                       !isFollowing && !isActiveUser && <AwesomeButton style={{marginBottom: '5%', marginRight: '10%'}} onPress={() => {followUnfollowUser('follow')}} disabled={isFollowing} size='large' type='primary'>Follow</AwesomeButton>
@@ -190,8 +228,8 @@ export function Profile() {
             <h1 style={{marginLeft: '2%',textAlign: 'left', color: 'white'}}>{isActiveUser ? 'My ' : '' } Most Recent Blogs</h1>
             <BlogCards blogs={userBlogs}></BlogCards>
           </Container>
-          <FollowerModal type={followModalSelection} show={modalShow} onHide={() => {setModalShow(false); setUsers([{}])}} />
-
+          <FollowerModal type={followModalSelection} show={followerModalShow} onHide={() => {setFollowerModalShow(false); setUsers([{}])}} />
+          <UserProfileModal show={userProfileModalShow} onHide={() => {setUserProfileModalShow(false); }} />
           <br></br>
           </LoadingOverlay>
         </span>
