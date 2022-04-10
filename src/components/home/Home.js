@@ -1,5 +1,5 @@
 import { React, useState } from 'react';
-import logo from './logo.svg';
+import logo from './beehive.svg';
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
 import {keychain, isKeychainInstalled, hasKeychainBeenUsed, keychainRequestSign} from '@hiveio/keychain';
@@ -36,7 +36,7 @@ export function HomeNoAuth() {
   return (
     <div className="App">
         <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <img src={logo} alt="logo" />
         <span>
 
             <AwesomeButton action={() => setModalShow(true)} variant="primary" type="primary">Sign In</AwesomeButton>
