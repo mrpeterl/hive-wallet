@@ -1,0 +1,14 @@
+
+.userTitle {
+    padding-top: 2vh;
+}
+
+.profileHeader {
+    background-color: lightyellow;
+    border: 3px solid rgba(255,193,7)!important;
+}
+
+.followCounter {
+    color: gray;
+    padding-top: 4%;
+}
