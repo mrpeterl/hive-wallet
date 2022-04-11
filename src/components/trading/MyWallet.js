@@ -8,13 +8,16 @@ import tokenIconDefault from './tokenIconDefault.png';
 import  DataTable from 'react-data-table-component';
 import { HiInformationCircle } from 'react-icons/hi';
 import { BiTransfer } from 'react-icons/bi';
+import { CgDetailsMore } from 'react-icons/cg';
 import TransferModal from './TransferModal';
 import AdditonalInformationModal from './AdditionalInformationModal';
+import TransactionHistoryModal from './TransactionHistoryModal';
 
 export function MyWallet() {
     const [selectedToken, setSelectedToken] = useState({symbol: 'SWAP.HIVE', balance: 0.00})
     const [transferModalShow, setTransferModalShow] = useState(false);
     const [additonalInformationModalShow, setAdditionalInformationModalShow] = useState(false);
+    const [transactionHistoryModalShow, setTransactionHistoryModalShow] = useState(false);
     const [tokensWithBalances, setTokensWithBalances] = useState([{_id: '1', issuer: 'hive', name: 'Hive Engine Token', symbol: 'HIVE', metadata: '{"url":"https://hive-engine.com","icon":"https://s3.amazonaws.com/steem-engine/images/icon_steem-engine_gradient.svg","desc":"BEE is the native token for the Hive Engine platform"}', account: 'hive', balance: 0.00, stake: 0.00}])
     const [loading, setLoading] = useState(false);
     
@@ -43,6 +46,11 @@ export function MyWallet() {
     async function showAddtionalInformation(symbol) {
         setSelectedToken(state => ({...state, symbol: symbol}));
         setAdditionalInformationModalShow(true);
+    }
+
+    async function showTransactionHistory(symbol) {
+        setSelectedToken(state => ({...state, symbol: symbol}));
+        setTransactionHistoryModalShow(true);
     }
 
     useEffect(() => {
@@ -81,6 +89,12 @@ export function MyWallet() {
             width: '15%',
             cell: (row) => <div><AwesomeButton  action={() => initiateTransfer(row.symbol, row.balance)} size='icon'><BiTransfer /></AwesomeButton></div>,
         },
+        {
+            name: 'Transaction History',
+            button: true,
+            width: '15%',
+            cell: (row) => <div><AwesomeButton  action={() => showTransactionHistory(row.symbol)} size='icon'><CgDetailsMore /></AwesomeButton></div>,
+        },
     ];
 
     return(
@@ -104,6 +118,7 @@ export function MyWallet() {
                             </div>
                 }
                 <br></br>
+                <TransactionHistoryModal selectedToken={selectedToken} show={transactionHistoryModalShow} onHide={() => setTransactionHistoryModalShow(false)} />
                 <AdditonalInformationModal selectedToken={selectedToken} show={additonalInformationModalShow} onHide={() => setAdditionalInformationModalShow(false)} />
                 <TransferModal selectedToken={selectedToken} show={transferModalShow} onHide={() => setTransferModalShow(false)} />
             </Container>
