@@ -2,7 +2,6 @@ import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Home, HomeNoAuth} from './components/home/Home';
 import { Blog } from './components/blog/Blog';
-import hive from '@hiveio/hive-js';
 import { CreateBlog } from './components/blog/CreateBlog';
 import { Profile } from './components/blog/profile/Profile';
 import { TokenList } from './components/trading/TokenList';

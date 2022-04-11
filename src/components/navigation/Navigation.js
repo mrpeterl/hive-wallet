@@ -1,5 +1,5 @@
 import { Form, FormControl, Button, Nav, Navbar, NavDropdown, Container } from "react-bootstrap";
-import logo from '../home/logo.svg';
+import logo from '../home/beehive.svg';
 import React, { useState } from 'react';
 
 export function Navigation() {
@@ -25,9 +25,9 @@ export function Navigation() {
         <img
           alt=""
           src={logo}
-          width="30"
-          height="30"
-          className="d-inline-block align-top"
+          width="60em"
+          height="60em"
+          className="d-inline-block align-middle"
         />{' '}
       HIVE Wallet
       </Navbar.Brand>
