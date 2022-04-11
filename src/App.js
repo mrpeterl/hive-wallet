@@ -5,6 +5,8 @@ import { Blog } from './components/blog/Blog';
 import hive from '@hiveio/hive-js';
 import { CreateBlog } from './components/blog/CreateBlog';
 import { Profile } from './components/blog/profile/Profile';
+import { TokenList } from './components/trading/TokenList';
+import { MyWallet } from './components/trading/MyWallet';
 
 function App() { 
   return (
@@ -20,6 +22,12 @@ function App() {
         <Route path="/blog/create" element={<CreateBlog />} />
         <Route path="/profile">
           <Route  path=":username" element={<Profile />} />
+        </Route>
+        <Route path="/trading">
+          <Route path="/trading" element={<TokenList />} />
+        </Route>
+        <Route path="/trading/myWallet">
+          <Route path="/trading/myWallet" element={<MyWallet />} />
         </Route>
       </Routes>
     </BrowserRouter>
