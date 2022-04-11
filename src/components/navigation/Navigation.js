@@ -42,11 +42,10 @@ export function Navigation() {
             <NavDropdown.Divider />
             <NavDropdown.Item href="/blog/create">Create Blog</NavDropdown.Item>
         </NavDropdown>
-        <Nav.Link href="/trading">Trading</Nav.Link>
-        <NavDropdown disabled='true' title="Trading" id="basic-nav-dropdown">
-            <NavDropdown.Item href="/home/trending">Trending</NavDropdown.Item>
+        <NavDropdown title="Trading" id="basic-nav-dropdown">
+            <NavDropdown.Item href="/trading">All Coins</NavDropdown.Item>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="/home/hot">Hot</NavDropdown.Item>
+            <NavDropdown.Item href="/trading/myWallet">My Wallet</NavDropdown.Item>
           </NavDropdown>
       <Form className="d-flex">
         <FormControl

@@ -95,6 +95,36 @@ export function Profile() {
     function UserProfileModal(props) {
         console.log(props)
 
+        async function UpdateProfileDetails() {
+            const displayName = document.getElementById('userDisplayNameInput').value;
+            const location = document.getElementById('userLocationInput').value;
+            const website = document.getElementById('userWebsiteInput').value;
+            const profilePicture = document.getElementById('userProfilePictureInput').value;
+
+            const jsonMetadata = "{\"profile\":{\"location\":\"" + location + "\",\"version\":2,\"profile_image\":\"" + profilePicture + "\",\"name\":\"" + displayName + "\",\"website\":\"" + website + "\"}}";
+            const operations = [
+                [
+                    'account_update2',
+                    {
+                        account: JSON.parse(localStorage.getItem('userData')).username,
+                        extensions: [],
+                        json_metadata: "",
+                        posting_json_metadata: JSON.stringify({
+                            profile: {
+                                version: 2,
+                                name: displayName,
+                                location: location,
+                                profile_image: profilePicture,
+                                website: website
+                            }
+                        })
+                    }
+                ]
+            ];
+
+           await processHiveTransaction(operations);
+        }
+
         return (
             <Modal
               {...props}
@@ -111,19 +141,31 @@ export function Profile() {
                 <Form>
                     <Row>
                         <Col>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" placeholder="name@example.com" />
+                            <Form.Group className="mb-3" >
+                                <Form.Label>Display Name</Form.Label>
+                                <Form.Control id="userDisplayNameInput" type="text" placeholder="Display Name" defaultValue={userDisplayName} />
                             </Form.Group>
+                            
+                            <Form.Group className="mb-3" >
+                                <Form.Label>Website</Form.Label>
+                                <Form.Control id="userWebsiteInput"  type="text" placeholder="Display Name" defaultValue={userWebsite} />
+                            </Form.Group>
+                            
                         </Col>
                         <Col>
-                            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" placeholder="name@example.com" />
+                            <Form.Group className="mb-3">
+                                <Form.Label>Location</Form.Label>
+                                <Form.Control id="userLocationInput" type="text" placeholder="Location" defaultValue={userLocation} />
                             </Form.Group>
                         </Col>
+                        <Form.Group  className="mb-3">
+                            <Form.Label>Profile Picture</Form.Label>
+                            <Form.Control id="userProfilePictureInput"  type="text" placeholder="Profile Picture" defaultValue={userImage} />
+                        </Form.Group>
                     </Row>
                 </Form>
+                <br />              
+                <AwesomeButton  id="profile-form-btn" className="left mr-auto" size="large" type="primary" action={UpdateProfileDetails}>Save</AwesomeButton>
               </Modal.Body>
               </Modal>
           );
@@ -151,6 +193,7 @@ export function Profile() {
                     })
                 }
               </Modal.Body>
+
               </Modal>
           );
     }

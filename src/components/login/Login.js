@@ -30,7 +30,7 @@ export default function LoginModal(props) {
     }
     try {
       const account = accounts.result[0]
-      const publicWif = account.posting.key_auths[0][0] || ''
+      const publicWif = account.active.key_auths[0][0] || ''
       const generatedPublicKey = await getPublicKey(privateKey);
       console.log(account)
       if (generatedPublicKey !== publicWif) {
@@ -77,12 +77,6 @@ export default function LoginModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <h4>Centered Modal</h4>
-        <p>
-          Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-          dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-          consectetur ac, vestibulum at eros.
-        </p>
         <Form>
           <Form.Group className="mb-3">
             <Form.Label>Username</Form.Label>
@@ -92,7 +86,7 @@ export default function LoginModal(props) {
           </Form.Group>
 
           <Form.Group className="mb-3" >
-            <Form.Label>Private Key</Form.Label>
+            <Form.Label>Private Active Key</Form.Label>
             <Form.Control onChange={() => {setKeyError(false); setDisableButton(false);}} isInvalid={keyError} id="key" type="password" placeholder="Private Key" />
             <Form.Control.Feedback type="invalid" >The private key does not match the username provided. Please double check and try again.</Form.Control.Feedback>
           </Form.Group>

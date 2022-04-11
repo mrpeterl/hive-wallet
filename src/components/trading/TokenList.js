@@ -1,37 +1,25 @@
 import { React, useEffect, useState } from 'react';
 import { Container } from "react-bootstrap";
 import LoadingOverlay from 'react-loading-overlay';
-import { marked } from 'marked';
+import { AwesomeButton } from 'react-awesome-button';
 import { Navigation } from '../navigation/Navigation';
 import { fetchHiveEngineData } from '../../utils/hiveEngine';
 import tokenIconDefault from './tokenIconDefault.png';
 import  DataTable from 'react-data-table-component';
+import { HiInformationCircle } from 'react-icons/hi';
+import AdditonalInformationModal from './AdditionalInformationModal';
  
 export function TokenList() {
-    const [tokens, setTokens] = useState([{_id: '1', issuer: 'hive', name: 'Hive Engine Token', symbol: 'HIVE', metadata: '{"url":"https://hive-engine.com","icon":"https://s3.amazonaws.com/steem-engine/images/icon_steem-engine_gradient.svg","desc":"BEE is the native token for the Hive Engine platform"}'}]);
-    const [metrics, setMetrics] = useState([{_id: '1', name:'Hive Engine Token', symbol: 'HIVE', volume: 0.00, lastPrice: 0.00, lowestAsk: 0.00, highestBid: 0.00, lastDayPrice: 0.00, priceChangeHive: 0.00, priceChangePercent: '0.00%'}])
     const [tokensWithMetrics, setTokensWithMetrics] = useState([{_id: '1', issuer: 'hive', name: 'Hive Engine Token', symbol: 'HIVE', metadata: '{"url":"https://hive-engine.com","icon":"https://s3.amazonaws.com/steem-engine/images/icon_steem-engine_gradient.svg","desc":"BEE is the native token for the Hive Engine platform"}', volume: 0.00, lastPrice: 0.00, lowestAsk: 0.00, highestBid: 0.00, lastDayPrice: 0.00, priceChangeHive: 0.00, priceChangePercent: '0.00%'}])
     const [loading, setLoading] = useState(false);
+    const [additonalInformationModalShow, setAdditionalInformationModalShow] = useState(false);
+    const [selectedToken, setSelectedToken] = useState({symbol: 'SWAP.HIVE', balance: 0.00})
 
-    async function getTokens() {
-        const tokensResponse = await fetchHiveEngineData('tokens', 'tokens');
-        console.log(tokensResponse);
-        setTokens(tokensResponse);
-        return tokensResponse;
-    }
-
-    async function getMetrics() {
-        const metricsResponse = await fetchHiveEngineData('market', 'metrics');
-        console.log(metricsResponse);
-        setMetrics(metricsResponse);
-        setLoading(false)
-        return metricsResponse;
-    }
     
     async function mergeArrayObjects(){
         
-        const tokens = await fetchHiveEngineData('tokens', 'tokens');
-        const metrics = await fetchHiveEngineData('market', 'metrics');
+        const tokens = await fetchHiveEngineData('tokens', 'tokens', {});
+        const metrics = await fetchHiveEngineData('market', 'metrics', {});
         let merged = [];
 
         for(let i=0; i<tokens.length; i++) {
@@ -40,11 +28,18 @@ export function TokenList() {
            ...(metrics.find((itmInner) => itmInner.symbol === tokens[i].symbol))}
           );
         }
-        console.log(merged);
-        setTokensWithMetrics(merged);
-      }
+        
+        setTokensWithMetrics(merged.filter(x => x.volume));
+        setLoading(false);
+    }
+    
+    async function showAddtionalInformation(symbol) {
+        setSelectedToken(state => ({...state, symbol: symbol}));
+        setAdditionalInformationModalShow(true);
+    }
 
     useEffect(() => {
+        setLoading(true);
         mergeArrayObjects();
     }, [])
 
@@ -62,15 +57,22 @@ export function TokenList() {
         {
             sortable: true,
             name: 'Volume',
-            selector: row => row.volume ? row.volume : 0.00,
+            selector: row => row.volume ? parseFloat(row.volume) : 0.00,
         },
         {
             sortable: true,
             name: '24h % Change',
-            selector: row => row.priceChangePercent ? (parseFloat(row.priceChangePercent)) +'%': '0.00%',
+            sortable: false,
+            selector: row => row.priceChangePercent ? row.priceChangePercent : 0.00,
             style: row => ({
                 color: row ? 'gray' : 'red'
             }),
+        },
+        {
+            name: 'Additional Information',
+            button: true,
+            width: '15%',
+            cell: (row) => <AwesomeButton action={() => showAddtionalInformation(row.symbol)}  size='icon'><HiInformationCircle /></AwesomeButton>,
         },
     ];
 
@@ -89,10 +91,11 @@ export function TokenList() {
                 <h1 style={{marginLeft: '2%',textAlign: 'left', color: 'white'}}>All Tokens</h1>
                 <br></br>
                 {
-                    tokens && <div style={{borderRadius:'0px'}}>
+                    tokensWithMetrics && <div style={{borderRadius:'0px'}}>
                                 <DataTable  theme='dark' noHeader={true} columns={columns} data={tokensWithMetrics} pagination paginationPerPage={20} />
                             </div>
                 }
+                <AdditonalInformationModal selectedToken={selectedToken} show={additonalInformationModalShow} onHide={() => setAdditionalInformationModalShow(false)} />
                 <br></br>
             </Container>
             <br></br>
