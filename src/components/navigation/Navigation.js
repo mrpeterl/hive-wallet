@@ -58,11 +58,11 @@ export function Navigation() {
           aria-label="Search"
         />            
         <Form.Control.Feedback type="invalid" >Please enter a search term.</Form.Control.Feedback>
-        <Button  onClick={handleSearch} variant="outline-success">Search</Button>
+        <Button style={{display: 'inline-block', marginRight: '20%'}} onClick={handleSearch} variant="outline-success">Search</Button>
       </Form>
         </Nav>
       <Navbar.Collapse className="justify-content-end">
-      <NavDropdown style={{paddingRight: '20%'}} title={JSON.parse(localStorage.getItem('userData')).username} id="basic-nav-dropdown">
+      <NavDropdown style={{display: 'inline-block', paddingLeft: '10%', paddingRight: '20%'}} title={JSON.parse(localStorage.getItem('userData')).username} id="basic-nav-dropdown">
             <NavDropdown.Item onClick={logout} href="/">Logout</NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item href={'/profile/' + JSON.parse(localStorage.getItem('userData')).username}>Profile</NavDropdown.Item>

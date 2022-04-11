@@ -11,9 +11,7 @@ export default function AdditonalInformationModal(props) {
         if(props.selectedToken.symbol){
             const token = await fetchHiveEngineDataForSpecficToken({ symbol: props.selectedToken.symbol });
             const metrics = await fetchHiveEngineData('market', 'metrics', {symbol: props.selectedToken.symbol});
-            console.log(props)
-            console.log(token)
-            console.log(metrics);
+           
             setTokenWithMetrics(state => ({...state,  name: token.name, symbol: token.symbol, metadata: token.metadata, maxSupply: token.maxSupply, circulatingSupply: token.circulatingSupply, description: JSON.parse(token.metadata).desc}))
         }
     }
