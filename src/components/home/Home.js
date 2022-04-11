@@ -1,6 +1,7 @@
 import { React, useState } from 'react';
 import logo from './beehive.svg';
 import { AwesomeButton } from "react-awesome-button";
+import { Modal } from "react-bootstrap";
 import "react-awesome-button/dist/styles.css";
 import {keychain, isKeychainInstalled, hasKeychainBeenUsed, keychainRequestSign} from '@hiveio/keychain';
 import LoginModal from '../login/Login';
@@ -9,30 +10,40 @@ import LoadingOverlay from 'react-loading-overlay';
 import { BlogDashboard } from '../blog/BlogDashboard';
 import { Navigation } from '../navigation/Navigation';
 
-const {success, msg, cancel, notInstalled, notActive} = await keychain(window, 'requestTransfer', 'mrpeterl', 'therealwolf', 5,  'test memo', 'HIVE');
-//const message = await keychainRequestSign(window, 'test', 'test', '', 'mrpeterl', 'https://api.hive.blog');
+function SignUpModal(props) {
+  return(
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+      <Modal.Title id="contained-modal-title-vcenter">
+          Sign Up
+      </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+          <h5>Hive powers many apps and is run completely decentralized by community members all around the world.</h5>
+          <br></br>
+          <h5>With an account, you have direct access to the ecosystem.</h5>
+          <br></br>
+          <h5>Several account creation services are provided by the community, offering you different levels of privacy and ease-of-use.</h5>
+          <br></br>
+          <h5>Signup at: <a target="_blank" href='https://signup.hive.io/'>https://signup.hive.io/</a></h5>
+      </Modal.Body>
+      <Modal.Footer>
+      <AwesomeButton className="center mr-auto" size="large" type="secondary" action={props.onHide}>Close</AwesomeButton>
+      </Modal.Footer>
+  </Modal>
+);
 
-//console.log(success + ' - ' + msg + ' - ' + cancel + ' - ' + notInstalled + ' - ' + notActive);
-console.log(isKeychainInstalled(window));
-console.log(hasKeychainBeenUsed());
-//console.log(message);
-// All good
-if(success) {
-  // do your thing
- }
- // User didn't cancel, so something must have happened
- else if(!cancel) {
-   if(notActive) {
-      //alert('Please allow Keychain to access this website')
-   } else if(notInstalled) {
-     // alert('Please install Keychain')
-   } else {
-     // error happened - check msg
-   }
- }
+}
 
 export function HomeNoAuth() {
-  const [modalShow, setModalShow] = useState(false);
+  const [modalShow, setModalShow] = useState(false);  
+  const [signUpModalShow, setSignUpModalShow] = useState(false);
+
   return (
     <div className="App">
         <header className="App-header">
@@ -42,7 +53,8 @@ export function HomeNoAuth() {
             <AwesomeButton action={() => setModalShow(true)} variant="primary" type="primary">Sign In</AwesomeButton>
             <LoginModal show={modalShow} onHide={() => setModalShow(false)} />
             <div className='divider'></div>
-            <AwesomeButton type="secondary">Sign Up</AwesomeButton>
+            <AwesomeButton action={() => setSignUpModalShow(true)} show={signUpModalShow} type="secondary">Sign Up</AwesomeButton>
+            <SignUpModal show={signUpModalShow} onHide={() => setSignUpModalShow(false)}></SignUpModal>
         </span>
         </header>
         
