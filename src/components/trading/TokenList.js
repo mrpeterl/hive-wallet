@@ -29,7 +29,8 @@ export function TokenList() {
           );
         }
         
-        setTokensWithMetrics(merged.filter(x => x.volume));
+        await setTokensWithMetrics(merged.filter(x => x.volume));
+        console.log(tokensWithMetrics);
         setLoading(false);
     }
     
@@ -44,6 +45,11 @@ export function TokenList() {
     }, [])
 
     const columns = [
+        {
+            name:'Image',
+            grow: 0,
+            cell: row => <img style={{ height:'84px', width:'84px'}} src={JSON.parse(row.metadata).icon ? JSON.parse(row.metadata).icon : tokenIconDefault} />,
+        },
         {
             sortable: true,
             name: 'Token',
@@ -72,9 +78,17 @@ export function TokenList() {
             name: 'Additional Information',
             button: true,
             width: '15%',
-            cell: (row) => <AwesomeButton action={() => showAddtionalInformation(row.symbol)}  size='icon'><HiInformationCircle /></AwesomeButton>,
+            cell: (row) => <AwesomeButton style={{paddding: '5%'}} action={() => showAddtionalInformation(row.symbol)}  size='icon'><HiInformationCircle /></AwesomeButton>,
         },
     ];
+
+    const conditionalRowStyles = [{
+        when: row => row.metadata,
+        style: {
+            marginTop: '1.5%',
+            marginBottom: '1.5%'
+        }
+    }]
 
     return(
         <div className="App">
@@ -92,7 +106,7 @@ export function TokenList() {
                 <br></br>
                 {
                     tokensWithMetrics && <div style={{borderRadius:'0px'}}>
-                                <DataTable  theme='dark' noHeader={true} columns={columns} data={tokensWithMetrics} pagination paginationPerPage={20} />
+                                <DataTable conditionalRowStyles={conditionalRowStyles} theme='dark' noHeader={true} columns={columns} data={tokensWithMetrics} pagination paginationPerPage={20} />
                             </div>
                 }
                 <AdditonalInformationModal selectedToken={selectedToken} show={additonalInformationModalShow} onHide={() => setAdditionalInformationModalShow(false)} />

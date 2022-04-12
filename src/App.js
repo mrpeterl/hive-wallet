@@ -6,6 +6,7 @@ import { CreateBlog } from './components/blog/CreateBlog';
 import { Profile } from './components/blog/profile/Profile';
 import { TokenList } from './components/trading/TokenList';
 import { MyWallet } from './components/trading/MyWallet';
+import NftGallery from './components/nft/NftGallery';
 
 function App() { 
   return (
@@ -27,6 +28,9 @@ function App() {
         </Route>
         <Route path="/trading/myWallet">
           <Route path="/trading/myWallet" element={<MyWallet />} />
+        </Route>
+        <Route path="/nft/gallery">
+          <Route path="/nft/gallery" element={<NftGallery />} />
         </Route>
       </Routes>
     </BrowserRouter>

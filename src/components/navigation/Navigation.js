@@ -47,6 +47,8 @@ export function Navigation() {
             <NavDropdown.Divider />
             <NavDropdown.Item href="/trading/myWallet">My Wallet</NavDropdown.Item>
           </NavDropdown>
+          <Nav.Link href="/nft/gallery">NFTs</Nav.Link>
+
       <Form className="d-flex">
         <FormControl
           onChange={() => {setSearchError(false); }}
