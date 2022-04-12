@@ -84,7 +84,7 @@ export function Profile() {
             ]
         ]
 
-        const followResponse = await processHiveTransaction(operations);
+        await processHiveTransaction(operations);
         setIsFollowing(type == 'follow' ? true : false);
     }
 
@@ -101,7 +101,6 @@ export function Profile() {
             const website = document.getElementById('userWebsiteInput').value;
             const profilePicture = document.getElementById('userProfilePictureInput').value;
 
-            const jsonMetadata = "{\"profile\":{\"location\":\"" + location + "\",\"version\":2,\"profile_image\":\"" + profilePicture + "\",\"name\":\"" + displayName + "\",\"website\":\"" + website + "\"}}";
             const operations = [
                 [
                     'account_update2',
