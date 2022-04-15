@@ -8,12 +8,11 @@ export default function AdditonalInformationModal(props) {
     const [tokenWithMetrics, setTokenWithMetrics] = useState({_id: '1', issuer: 'hive', name: 'Hive Engine Token', symbol: 'HIVE', description: 'BEE is the native token for the Hive Engine platform', metadata: '{"url":"https://hive-engine.com","icon":"https://s3.amazonaws.com/steem-engine/images/icon_steem-engine_gradient.svg","desc":"BEE is the native token for the Hive Engine platform"}', volume: 0.00, maxSupply: 0.00, circulatingSupply: 0.00, lowestAsk: 0.00, highestBid: 0.00, lastDayPrice: 0.00, priceChangeHive: 0.00, priceChangePercent: '0.00%'})
 
     async function getMetrics() {
-        if(props.selectedToken.symbol){
-            const token = await fetchHiveEngineDataForSpecficToken({ symbol: props.selectedToken.symbol });
-            const metrics = await fetchHiveEngineData('market', 'metrics', {symbol: props.selectedToken.symbol});
-           
-            setTokenWithMetrics(state => ({...state,  name: token.name, symbol: token.symbol, metadata: token.metadata, maxSupply: token.maxSupply, circulatingSupply: token.circulatingSupply, description: JSON.parse(token.metadata).desc}))
-        }
+        const token = await fetchHiveEngineDataForSpecficToken({ symbol: props.selectedToken.symbol });
+        const metrics = await fetchHiveEngineData('market', 'metrics', {symbol: props.selectedToken.symbol});
+        console.log(metrics)
+        console.log(token)
+        setTokenWithMetrics(state => ({...state,  name: token.name, symbol: token.symbol, metadata: token.metadata, maxSupply: token.maxSupply, circulatingSupply: token.circulatingSupply, volume: metrics[0] > 0 ? metrics[0].volume: 0.00, website: JSON.parse(token.metadata).url, description: JSON.parse(token.metadata).desc}))
     }
 
     useEffect(() => {
@@ -54,6 +53,9 @@ export default function AdditonalInformationModal(props) {
                 <h6>{tokenWithMetrics.circulatingSupply}</h6>
                 <br></br>
 
+                <h2>Website</h2>
+                <h6><a target="_blank" href={tokenWithMetrics.website}>{tokenWithMetrics.website}</a></h6>
+                <br></br>
             </Modal.Body>
             <Modal.Footer>
             <AwesomeButton className="center mr-auto" size="large" type="secondary" action={props.onHide}>Close</AwesomeButton>

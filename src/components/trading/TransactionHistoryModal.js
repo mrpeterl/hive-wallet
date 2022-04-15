@@ -11,12 +11,9 @@ export default function TransactionHistoryModal(props) {
 
     async function getTransactionHistory() {
         const history = await fetchHiveData('account_history_api.get_account_history', { limit: 1000, account: JSON.parse(localStorage.getItem('userData')).username });        
-        console.log(history);
         const transactions = history.result.history.reverse().filter(x => x[1].op.value.json);
         const selectedTokenTransactions = transactions.filter(x => JSON.parse(x[1].op.value.json).token == props.selectedToken.symbol);
-        await setTransactionHistory(selectedTokenTransactions);
-        console.log(transactionHistory)
-        
+        await setTransactionHistory(selectedTokenTransactions);        
     }
 
     const columns = [

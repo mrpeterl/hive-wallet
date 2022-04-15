@@ -3,6 +3,9 @@ import LoadingOverlay from 'react-loading-overlay';
 import { Container, Row, Col, Card } from "react-bootstrap";
 import { Navigation } from '../navigation/Navigation';
 import { fetchHiveEngineData }from '../../utils/hiveEngine';
+import { AwesomeButton } from 'react-awesome-button';
+import { BiTransfer } from 'react-icons/bi';
+import TransferNftModal from './TransferNftModal';
 
 export default function NftGallery() {
 
@@ -10,6 +13,8 @@ export default function NftGallery() {
     const [dCropsNFTs, setDCropsNFTs] = useState([{_id: '1', properties: { name: 'Watermelon', nft: '', primary: '', secondary: ''}, account: 'hive'}])
     const [fishMasterNFTs, setFishMasterNFTs] = useState([{_id: '1', properties: { name: 'Watermelon', nft: '', primary: '', secondary: ''}, account: 'hive'}])
     const [risingStarNFTs, setRisingStarNFTs] = useState([{_id: '1', properties: { name: 'Watermelon', nft: '', primary: '', secondary: ''}, account: 'hive'}])
+    const [selectednft, setSelectedNFT] = useState({id: '1', symbol: 'TEST', name: 'Name'})
+    const [transferModalShow, setTransferModalShow] = useState(false);
 
     async function getNFTs() {
 
@@ -22,7 +27,13 @@ export default function NftGallery() {
         const risingStarNfts = await fetchHiveEngineData('nft', 'STARinstances', {account: JSON.parse(localStorage.getItem('userData')).username});
         await setRisingStarNFTs(risingStarNfts);
 
+
         setLoading(false);    
+    }
+
+    async function initiateTransfer(id, symbol, name) {
+        setSelectedNFT({id: id, symbol: symbol, name: name});
+        setTransferModalShow(true);
     }
 
     useEffect(() => {
@@ -50,7 +61,7 @@ export default function NftGallery() {
                       height: 3
                   }}
               />
-              <h2 style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%'}}>DCrops</h2>
+              {(dCropsNFTs.length > 0) && <h2 style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%'}}>DCrops</h2>}
               <Row xs={1} md={3} className="g-4">
               {Array.from(dCropsNFTs).map((nft, idx) => (
                 <Col style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%', paddingRight: '4%'}}>
@@ -65,40 +76,44 @@ export default function NftGallery() {
                             nft.properties.nft && <div style={{marginTop: '5%'}}><h4>Rarity</h4><h5>{JSON.parse(nft.properties.nft).rarity}</h5></div>
                         }
                       </Card.Text>
+                      <br></br>
+                      <AwesomeButton  action={() => initiateTransfer(nft._id, 'DCROPS', nft.properties.name)} size='large'><BiTransfer /> Transfer</AwesomeButton>
                     </Card.Body>
                   </Card>
                 </Col>
               ))}
             </Row>
             <br/>
-              <hr
+            {(dCropsNFTs.length > 0) && <hr
                   style={{
                       color: 'gray',
                       backgroundColor: 'gray',
                       height: 3
                   }}
-              />
-            <h2 style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%'}}>Game of Life</h2>
+              />}
+            {(fishMasterNFTs.length > 0) && <h2 style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%'}}>Fishmasters</h2>}
               <Row xs={1} md={3} className="g-4">
               {Array.from(fishMasterNFTs).map((nft, idx) => (
                 <Col style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%', paddingRight: '4%'}}>
                   <Card >
                     <Card.Body>
                       <Card.Title><h3>{nft.properties.card}</h3></Card.Title>
+                      <br></br>
+                      <AwesomeButton  action={() => initiateTransfer(nft._id, 'FISH', nft.properties.name)} size='large'><BiTransfer /> Transfer</AwesomeButton>
                     </Card.Body>
                   </Card>
                 </Col>
               ))}
             </Row>
             <br/>
-              <hr
+            {(fishMasterNFTs.length > 0) && <hr
                   style={{
                       color: 'gray',
                       backgroundColor: 'gray',
                       height: 3
                   }}
-              />
-            <h2 style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%'}}>Rising Star</h2>
+              />}
+            {(risingStarNFTs.length > 0) && <h2 style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%'}}>Rising Star</h2>}
               <Row xs={1} md={3} className="g-4">
               {Array.from(risingStarNFTs).map((nft, idx) => (
                 <Col style={{textAlign: 'left',  paddingTop: '2vh', paddingLeft: '4%', paddingRight: '4%'}}>
@@ -110,13 +125,17 @@ export default function NftGallery() {
                         }
                         {
                             nft.properties && <div style={{marginTop: '5%'}}><h4>Stats</h4><h5>{nft.properties.stats}</h5></div>
-                        }
+                        }                   
+                        <br></br>
+                        <AwesomeButton  action={() => initiateTransfer(nft._id, 'STAR', nft.properties.name)} size='large'><BiTransfer /> Transfer</AwesomeButton>
                     </Card.Body>
                   </Card>
                 </Col>
               ))}
             </Row>
-            <br></br>
+            <br></br>               
+            <TransferNftModal selectednft={selectednft} show={transferModalShow} onHide={() => setTransferModalShow(false)} />
+
             </Container>
           <br />
           </LoadingOverlay>
