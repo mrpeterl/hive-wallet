@@ -48,7 +48,7 @@ export function TokenList() {
         {
             name:'Image',
             grow: 0,
-            cell: row => <img style={{ height:'84px', width:'84px'}} src={JSON.parse(row.metadata).icon ? JSON.parse(row.metadata).icon : tokenIconDefault} />,
+            cell: row => <img style={{ height:'84px', width:'84px'}} onError={(e)=> e.currentTarget.src = tokenIconDefault} src={JSON.parse(row.metadata).icon ? JSON.parse(row.metadata).icon : tokenIconDefault} />,
         },
         {
             sortable: true,
@@ -69,10 +69,21 @@ export function TokenList() {
             sortable: true,
             name: '24h % Change',
             sortable: false,
-            selector: row => row.priceChangePercent ? row.priceChangePercent : 0.00,
-            style: row => ({
-                color: row ? 'gray' : 'red'
-            }),
+            selector: row => row.priceChangePercent ? row.priceChangePercent : '0.00%',
+            conditionalCellStyles:[
+                { 
+                    when: row => row.priceChangePercent ? parseFloat(row.priceChangePercent.substr(0, row.priceChangePercent.indexOf('%'))) < 0  : false,
+                    style: {
+                        color: 'red'
+                    }
+                },
+                { 
+                    when: row => row.priceChangePercent ? parseFloat(row.priceChangePercent.substr(0, row.priceChangePercent.indexOf('%'))) > 0  : false,
+                    style: {
+                        color: 'green'
+                    }
+                }
+            ],
         },
         {
             name: 'Additional Information',

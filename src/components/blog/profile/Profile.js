@@ -232,7 +232,7 @@ export function Profile() {
                         <br></br>
                         <br></br>
                         <BsGlobe size='1.75em' style={{ marginLeft: '25%'}}></BsGlobe> 
-                        <h6  style={{height: '100%', float: 'right', marginRight: '20%', overflow: 'hidden', maxWidth: '10em', textOverflow: 'ellipsis'}}><a href={userWebsite}>{userWebsite}</a></h6>
+                        <h6  style={{height: '100%', float: 'right', marginRight: '20%', overflow: 'hidden', maxWidth: '10em', textOverflow: 'ellipsis'}}><a target="_blank" href={userWebsite}>{userWebsite}</a></h6>
                     </div>
                 </Col>
                 <Col>          
